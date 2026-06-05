@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:multiplayer": "powershell -NoProfile -ExecutionPolicy Bypass -File ./start-multiplayer-local.ps1",
     "dev:client": "vite",
     "dev:server": "tsx watch server/src/index.ts",
     "build": "tsc --noEmit && vite build && node scripts/copy-404.mjs",

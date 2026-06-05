@@ -49,6 +49,26 @@ O cliente abre em `http://localhost:5173`. O servidor responde em `http://localh
 
 ## Como rodar o multiplayer localmente
 
+### Jeito automatico no Windows
+
+Use o arquivo da raiz do projeto:
+
+```bash
+start-multiplayer-local.cmd
+```
+
+Ele cria o `.env.local`, libera as portas `5173` e `3001`, instala dependencias se precisar e sobe frontend + backend juntos.
+
+Tambem da para rodar pelo npm:
+
+```bash
+npm run dev:multiplayer
+```
+
+Depois abra `http://localhost:5173`, clique em **Sessao online** e a tela deve mostrar **Conectado**.
+
+### Jeito manual
+
 1. Rode `npm install`.
 2. Confirme que existe `.env.local` na raiz com `VITE_SOCKET_URL=http://localhost:3001`.
 3. Confirme que o backend usa `PORT=3001`.
