@@ -4,27 +4,43 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc --noEmit && vite build",
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:client": "vite",
+    "dev:server": "tsx watch server/src/index.ts",
+    "build": "tsc --noEmit && vite build && node scripts/copy-404.mjs",
     "preview": "vite preview",
-    "test": "tsx --test src/logic/dice.test.ts src/logic/character.test.ts src/components/CharacterCreator.test.tsx"
+    "start:server": "tsx server/src/index.ts",
+    "test": "npm run test:client && npm run test:server",
+    "test:client": "tsx --test src/logic/dice.test.ts src/logic/character.test.ts src/components/CharacterCreator.test.tsx",
+    "test:server": "tsx --test server/src/utils/generateCode.test.ts server/src/dice/diceService.test.ts server/src/sessions/sessionService.test.ts"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.3.4",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "lowdb": "^7.0.1",
     "lucide-react": "^0.468.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
+    "tsx": "^4.19.2",
     "typescript": "^5.7.2",
     "vite": "^6.4.3"
   },
   "devDependencies": {
     "@testing-library/react": "^16.1.0",
     "@testing-library/user-event": "^14.5.2",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
     "@types/jsdom": "^21.1.7",
     "@types/node": "^22.10.2",
     "@types/react": "^18.3.17",
     "@types/react-dom": "^18.3.5",
-    "jsdom": "^25.0.1",
-    "tsx": "^4.19.2"
+    "concurrently": "^9.1.2",
+    "jsdom": "^25.0.1"
   }
 }

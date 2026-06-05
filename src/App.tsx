@@ -4,6 +4,8 @@ import CharacterCreator from "./components/CharacterCreator";
 import CharacterSheet from "./components/CharacterSheet";
 import SaveLoadPanel from "./components/SaveLoadPanel";
 import RollHistory from "./components/RollHistory";
+import MultiplayerApp from "./features/multiplayer/MultiplayerApp";
+import { getSessionCodeFromPath, setLocalPath } from "./features/multiplayer/routes";
 import {
   duplicateCharacter,
   refreshCharacter,
@@ -20,10 +22,13 @@ import {
 import type { Character, Difficulty, ModifierBreakdown, RollResult } from "./types";
 
 type AppMode = "creator" | "sheet";
+type AppView = "local" | "online";
 
 const HISTORY_LIMIT = 50;
 
 export default function App() {
+  const initialSessionCode = useMemo(() => getSessionCodeFromPath(), []);
+  const [view, setView] = useState<AppView>(() => (initialSessionCode ? "online" : "local"));
   const [characters, setCharacters] = useState<Character[]>(() => loadCharacters());
   const [activeId, setActiveId] = useState<string | null>(() => loadActiveCharacterId());
   const [mode, setMode] = useState<AppMode>(() => (loadCharacters().length ? "sheet" : "creator"));
@@ -163,57 +168,84 @@ export default function App() {
           </div>
         </div>
 
-        <button className="primary-action" type="button" onClick={() => setMode("creator")}>
-          <Plus size={18} />
-          Nova ficha
-        </button>
+        <div className="topbar-actions">
+          <button
+            type="button"
+            className={view === "local" ? "primary-action" : ""}
+            onClick={() => {
+              setView("local");
+              setLocalPath();
+            }}
+          >
+            Modo local
+          </button>
+          <button
+            type="button"
+            className={view === "online" ? "primary-action" : ""}
+            onClick={() => setView("online")}
+          >
+            Sessao online
+          </button>
+          {view === "local" ? (
+            <button className="primary-action" type="button" onClick={() => setMode("creator")}>
+              <Plus size={18} />
+              Nova ficha
+            </button>
+          ) : null}
+        </div>
       </header>
 
-      <main className="layout">
-        <aside className="sidebar no-print">
-          <SaveLoadPanel
-            characters={characters}
-            activeId={activeCharacter?.id ?? null}
-            onLoad={(id) => {
-              setActiveId(id);
-              setMode("sheet");
-            }}
-            onDuplicate={handleDuplicate}
-            onDelete={handleDelete}
-            onExport={() => activeCharacter}
-            onImport={handleImport}
-            onPrint={() => window.print()}
-          />
-          <RollHistory history={activeHistory} onClear={clearHistory} />
-        </aside>
-
-        <section className="main-stage">
-          {toast ? <div className="toast no-print">{toast}</div> : null}
-
-          {mode === "creator" ? (
-            <CharacterCreator onCreate={upsertCharacter} />
-          ) : activeCharacter ? (
-            <CharacterSheet
-              character={activeCharacter}
-              difficulty={difficulty}
-              latestRoll={latestRoll}
-              onDifficultyChange={setDifficulty}
-              onChange={upsertCharacter}
-              onRoll={handleRoll}
-              onOpposedRoll={handleOpposedRoll}
+      {view === "online" ? (
+        <main className="online-stage">
+          <MultiplayerApp initialCode={initialSessionCode} />
+        </main>
+      ) : (
+        <main className="layout">
+          <aside className="sidebar no-print">
+            <SaveLoadPanel
+              characters={characters}
+              activeId={activeCharacter?.id ?? null}
+              onLoad={(id) => {
+                setActiveId(id);
+                setMode("sheet");
+              }}
+              onDuplicate={handleDuplicate}
+              onDelete={handleDelete}
+              onExport={() => activeCharacter}
+              onImport={handleImport}
+              onPrint={() => window.print()}
             />
-          ) : (
-            <div className="empty-state">
-              <h1>Nenhuma ficha ainda</h1>
-              <p>Crie uma personagem para comecar a jogar.</p>
-              <button className="primary-action" type="button" onClick={() => setMode("creator")}>
-                <Plus size={18} />
-                Criar ficha
-              </button>
-            </div>
-          )}
-        </section>
-      </main>
+            <RollHistory history={activeHistory} onClear={clearHistory} />
+          </aside>
+
+          <section className="main-stage">
+            {toast ? <div className="toast no-print">{toast}</div> : null}
+
+            {mode === "creator" ? (
+              <CharacterCreator onCreate={upsertCharacter} />
+            ) : activeCharacter ? (
+              <CharacterSheet
+                character={activeCharacter}
+                difficulty={difficulty}
+                latestRoll={latestRoll}
+                onDifficultyChange={setDifficulty}
+                onChange={upsertCharacter}
+                onRoll={handleRoll}
+                onOpposedRoll={handleOpposedRoll}
+              />
+            ) : (
+              <div className="empty-state">
+                <h1>Nenhuma ficha ainda</h1>
+                <p>Crie uma personagem para comecar a jogar.</p>
+                <button className="primary-action" type="button" onClick={() => setMode("creator")}>
+                  <Plus size={18} />
+                  Criar ficha
+                </button>
+              </div>
+            )}
+          </section>
+        </main>
+      )}
     </div>
   );
 }

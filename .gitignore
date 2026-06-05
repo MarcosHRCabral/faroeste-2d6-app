@@ -4,3 +4,6 @@ dist
 *.tsbuildinfo
 coverage
 *.local
+server/data/*.json
+server/data/*.tmp
+!server/data/.gitkeep

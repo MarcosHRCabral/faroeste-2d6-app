@@ -17,6 +17,8 @@ interface CharacterSheetProps {
   character: Character;
   difficulty: Difficulty;
   latestRoll?: RollResult;
+  readOnly?: boolean;
+  readOnlyReason?: string;
   onDifficultyChange: (difficulty: Difficulty) => void;
   onChange: (character: Character) => void;
   onRoll: (source: string, modifiers: ModifierBreakdown[], difficulty: Difficulty) => void;
@@ -43,12 +45,18 @@ export default function CharacterSheet({
   character,
   difficulty,
   latestRoll,
+  readOnly = false,
+  readOnlyReason,
   onDifficultyChange,
   onChange,
   onRoll,
   onOpposedRoll
 }: CharacterSheetProps) {
   function update(patch: Partial<Character>) {
+    if (readOnly) {
+      return;
+    }
+
     onChange({ ...character, ...patch });
   }
 
@@ -64,12 +72,18 @@ export default function CharacterSheet({
   return (
     <div className="sheet-wrap">
       <article className="character-sheet parchment">
+        {readOnly ? (
+          <div className="read-only-banner">
+            {readOnlyReason || "Voce esta vendo esta ficha em modo leitura."}
+          </div>
+        ) : null}
         <header className="sheet-header">
           <div className="identity-fields">
             <label>
               Nome
               <input
                 value={character.name}
+                disabled={readOnly}
                 onChange={(event) => update({ name: event.target.value })}
               />
             </label>
@@ -77,6 +91,7 @@ export default function CharacterSheet({
               Idade
               <input
                 value={character.age}
+                disabled={readOnly}
                 onChange={(event) => update({ age: event.target.value })}
               />
             </label>
@@ -84,6 +99,7 @@ export default function CharacterSheet({
               Origem / etnia / arquetipo cultural
               <input
                 value={character.originName}
+                disabled={readOnly}
                 onChange={(event) => update({ originName: event.target.value })}
               />
             </label>
@@ -91,6 +107,7 @@ export default function CharacterSheet({
               Profissao
               <input
                 value={character.professionName}
+                disabled={readOnly}
                 onChange={(event) => update({ professionName: event.target.value })}
               />
             </label>
@@ -103,6 +120,7 @@ export default function CharacterSheet({
               <input
                 type="number"
                 value={character.currentHealth}
+                disabled={readOnly}
                 onChange={(event) => update({ currentHealth: Number(event.target.value) })}
               />
               <span>/ {character.derived.maxHealth}</span>
@@ -113,6 +131,7 @@ export default function CharacterSheet({
               <input
                 type="number"
                 value={character.currentEnergy}
+                disabled={readOnly}
                 onChange={(event) => update({ currentEnergy: Number(event.target.value) })}
               />
               <span>/ {character.derived.maxEnergy}</span>
@@ -123,6 +142,7 @@ export default function CharacterSheet({
             <button
               type="button"
               className="icon-text"
+              disabled={readOnly}
               onClick={() =>
                 onRoll(
                   "Iniciativa",
@@ -142,6 +162,7 @@ export default function CharacterSheet({
             <AttributeBlock
               attributes={character.attributes}
               difficulty={difficulty}
+              readOnly={readOnly}
               onChange={updateAttribute}
               onRoll={onRoll}
             />
@@ -149,6 +170,7 @@ export default function CharacterSheet({
             <SkillList
               character={character}
               difficulty={difficulty}
+              readOnly={readOnly}
               onChange={(skills) => update({ skills })}
               onRoll={onRoll}
             />
@@ -156,6 +178,7 @@ export default function CharacterSheet({
             <EquipmentList
               equipment={character.equipment}
               weapons={character.weapons}
+              readOnly={readOnly}
               onEquipmentChange={(equipment) => update({ equipment })}
               onWeaponsChange={(weapons) => update({ weapons })}
             />
@@ -179,6 +202,7 @@ export default function CharacterSheet({
               Aparencia
               <textarea
                 value={character.appearance}
+                disabled={readOnly}
                 onChange={(event) => update({ appearance: event.target.value })}
                 rows={3}
               />
@@ -187,6 +211,7 @@ export default function CharacterSheet({
               Personalidade
               <textarea
                 value={character.personality}
+                disabled={readOnly}
                 onChange={(event) => update({ personality: event.target.value })}
                 rows={3}
               />
@@ -195,6 +220,7 @@ export default function CharacterSheet({
               Historia curta
               <textarea
                 value={character.history}
+                disabled={readOnly}
                 onChange={(event) => update({ history: event.target.value })}
                 rows={4}
               />
@@ -203,6 +229,7 @@ export default function CharacterSheet({
               Objetivo pessoal
               <textarea
                 value={character.objective}
+                disabled={readOnly}
                 onChange={(event) => update({ objective: event.target.value })}
                 rows={4}
               />
@@ -217,6 +244,7 @@ export default function CharacterSheet({
               <input
                 type="number"
                 value={character.money}
+                disabled={readOnly}
                 onChange={(event) => update({ money: Number(event.target.value) })}
               />
             </label>
@@ -224,6 +252,7 @@ export default function CharacterSheet({
               Vantagens
               <textarea
                 value={listToText(character.advantages)}
+                disabled={readOnly}
                 onChange={(event) => update({ advantages: textToList(event.target.value) })}
                 rows={4}
               />
@@ -232,6 +261,7 @@ export default function CharacterSheet({
               Desvantagens
               <textarea
                 value={listToText(character.disadvantages)}
+                disabled={readOnly}
                 onChange={(event) => update({ disadvantages: textToList(event.target.value) })}
                 rows={4}
               />
@@ -240,6 +270,7 @@ export default function CharacterSheet({
               Resumo
               <textarea
                 value={character.summary}
+                disabled={readOnly}
                 onChange={(event) => update({ summary: event.target.value })}
                 rows={4}
               />
@@ -248,6 +279,7 @@ export default function CharacterSheet({
               Anotacoes livres
               <textarea
                 value={character.notes}
+                disabled={readOnly}
                 onChange={(event) => update({ notes: event.target.value })}
                 rows={6}
               />

@@ -7,6 +7,7 @@ import type { GearItem, Weapon } from "../types";
 interface EquipmentListProps {
   equipment: GearItem[];
   weapons: Weapon[];
+  readOnly?: boolean;
   onEquipmentChange: (equipment: GearItem[]) => void;
   onWeaponsChange: (weapons: Weapon[]) => void;
 }
@@ -14,6 +15,7 @@ interface EquipmentListProps {
 export default function EquipmentList({
   equipment,
   weapons,
+  readOnly = false,
   onEquipmentChange,
   onWeaponsChange
 }: EquipmentListProps) {
@@ -25,18 +27,26 @@ export default function EquipmentList({
       <div className="section-title-row">
         <h2>Equipamentos e armas</h2>
         <div className="inline-actions">
-          <button type="button" onClick={() => onEquipmentChange([...equipment, makeGearItem("")])}>
+          <button
+            type="button"
+            disabled={readOnly}
+            onClick={() => onEquipmentChange([...equipment, makeGearItem("")])}
+          >
             <Plus size={16} />
             Item
           </button>
-          <button type="button" onClick={() => onWeaponsChange([...weapons, makeWeapon("")])}>
+          <button
+            type="button"
+            disabled={readOnly}
+            onClick={() => onWeaponsChange([...weapons, makeWeapon("")])}
+          >
             <Plus size={16} />
             Arma
           </button>
         </div>
       </div>
 
-      <div className="quick-add-grid">
+      <div className={readOnly ? "quick-add-grid read-only-hidden" : "quick-add-grid"}>
         <div className="quick-add">
           <label>
             Lista de equipamentos
@@ -53,6 +63,7 @@ export default function EquipmentList({
           </label>
           <button
             type="button"
+            disabled={readOnly}
             onClick={() =>
               selectedEquipment && onEquipmentChange([...equipment, makeGearItem(selectedEquipment)])
             }
@@ -75,6 +86,7 @@ export default function EquipmentList({
           </label>
           <button
             type="button"
+            disabled={readOnly}
             onClick={() => selectedWeapon && onWeaponsChange([...weapons, makeWeapon(selectedWeapon)])}
           >
             <Plus size={16} />
@@ -90,6 +102,7 @@ export default function EquipmentList({
             <div className="editable-line" key={item.id}>
               <input
                 value={item.name}
+                disabled={readOnly}
                 onChange={(event) =>
                   onEquipmentChange(
                     equipment.map((current) =>
@@ -101,6 +114,7 @@ export default function EquipmentList({
               />
               <input
                 value={item.notes}
+                disabled={readOnly}
                 onChange={(event) =>
                   onEquipmentChange(
                     equipment.map((current) =>
@@ -113,6 +127,7 @@ export default function EquipmentList({
               <button
                 type="button"
                 className="icon-only danger"
+                disabled={readOnly}
                 aria-label={`Remover ${item.name || "item"}`}
                 onClick={() => onEquipmentChange(equipment.filter((current) => current.id !== item.id))}
               >
@@ -128,6 +143,7 @@ export default function EquipmentList({
             <div className="weapon-line" key={weapon.id}>
               <input
                 value={weapon.name}
+                disabled={readOnly}
                 onChange={(event) =>
                   onWeaponsChange(
                     weapons.map((current) =>
@@ -139,6 +155,7 @@ export default function EquipmentList({
               />
               <input
                 value={weapon.damage}
+                disabled={readOnly}
                 onChange={(event) =>
                   onWeaponsChange(
                     weapons.map((current) =>
@@ -150,6 +167,7 @@ export default function EquipmentList({
               />
               <input
                 value={weapon.range}
+                disabled={readOnly}
                 onChange={(event) =>
                   onWeaponsChange(
                     weapons.map((current) =>
@@ -161,6 +179,7 @@ export default function EquipmentList({
               />
               <input
                 value={weapon.notes}
+                disabled={readOnly}
                 onChange={(event) =>
                   onWeaponsChange(
                     weapons.map((current) =>
@@ -173,6 +192,7 @@ export default function EquipmentList({
               <button
                 type="button"
                 className="icon-only danger"
+                disabled={readOnly}
                 aria-label={`Remover ${weapon.name || "arma"}`}
                 onClick={() => onWeaponsChange(weapons.filter((current) => current.id !== weapon.id))}
               >

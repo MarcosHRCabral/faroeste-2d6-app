@@ -6,6 +6,7 @@ import type { AttributeKey, Attributes, Difficulty, ModifierBreakdown } from "..
 interface AttributeBlockProps {
   attributes: Attributes;
   difficulty: Difficulty;
+  readOnly?: boolean;
   onChange: (key: AttributeKey, value: number) => void;
   onRoll: (source: string, modifiers: ModifierBreakdown[], difficulty: Difficulty) => void;
 }
@@ -13,6 +14,7 @@ interface AttributeBlockProps {
 export default function AttributeBlock({
   attributes,
   difficulty,
+  readOnly = false,
   onChange,
   onRoll
 }: AttributeBlockProps) {
@@ -26,11 +28,13 @@ export default function AttributeBlock({
             <input
               type="number"
               value={attributes[key]}
+              disabled={readOnly}
               onChange={(event) => onChange(key, Number(event.target.value))}
             />
             <button
               type="button"
               className="icon-text"
+              disabled={readOnly}
               onClick={() =>
                 onRoll(
                   `Teste de ${attributeLabels[key]}`,

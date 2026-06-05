@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: faroeste-2d6-server
+    runtime: node
+    plan: free
+    buildCommand: npm ci
+    startCommand: npm run start:server
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: CLIENT_ORIGIN
+        value: https://marcoshrcabral.github.io

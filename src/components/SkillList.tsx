@@ -6,11 +6,18 @@ import type { Character, Difficulty, ModifierBreakdown, Skill } from "../types";
 interface SkillListProps {
   character: Character;
   difficulty: Difficulty;
+  readOnly?: boolean;
   onChange: (skills: Skill[]) => void;
   onRoll: (source: string, modifiers: ModifierBreakdown[], difficulty: Difficulty) => void;
 }
 
-export default function SkillList({ character, difficulty, onChange, onRoll }: SkillListProps) {
+export default function SkillList({
+  character,
+  difficulty,
+  readOnly = false,
+  onChange,
+  onRoll
+}: SkillListProps) {
   function updateSkill(id: string, patch: Partial<Skill>) {
     onChange(character.skills.map((skill) => (skill.id === id ? { ...skill, ...patch } : skill)));
   }
@@ -38,17 +45,20 @@ export default function SkillList({ character, difficulty, onChange, onRoll }: S
                 aria-label={`Bonus de ${skill.name}`}
                 type="number"
                 value={skill.bonus}
+                disabled={readOnly}
                 onChange={(event) => updateSkill(skill.id, { bonus: Number(event.target.value) })}
               />
               <input
                 aria-label={`Notas de ${skill.name}`}
                 value={skill.notes}
+                disabled={readOnly}
                 onChange={(event) => updateSkill(skill.id, { notes: event.target.value })}
                 placeholder="observacoes"
               />
               <button
                 type="button"
                 className="icon-text"
+                disabled={readOnly}
                 onClick={() =>
                   onRoll(
                     skill.name,
