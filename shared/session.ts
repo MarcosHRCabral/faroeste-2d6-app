@@ -1,5 +1,5 @@
 export type PlayerRole = "gm" | "player";
-export type ConnectionStatus = "connected" | "reconnecting" | "disconnected";
+export type ConnectionStatus = "unconfigured" | "connecting" | "connected" | "reconnecting" | "disconnected" | "error";
 export type CriticalType = "success" | "failure" | null;
 
 export type AttributeKey = "forca" | "destreza" | "constituicao" | "inteligencia" | "sorte";

@@ -962,11 +962,14 @@ h3 {
   background: var(--success);
 }
 
+.status-dot.connecting,
 .status-dot.reconnecting {
   background: var(--brass);
 }
 
-.status-dot.disconnected {
+.status-dot.disconnected,
+.status-dot.error,
+.status-dot.unconfigured {
   background: var(--danger);
 }
 

@@ -7,6 +7,13 @@ O app tem dois modos:
 - **Modo local:** funciona sozinho no navegador, salva fichas no `localStorage`, importa/exporta JSON e imprime a ficha para salvar como PDF.
 - **Sessao online:** usa um servidor Node + Express + Socket.IO para salas privadas em tempo real, com Mestre/Jogadores, fichas sincronizadas, rolagens oficiais no servidor, chat e painel basico do Mestre.
 
+## Estrutura
+
+- Frontend Vite + React + TypeScript na raiz do projeto.
+- Backend Socket.IO em `server/`, rodando por padrao na porta `3001`.
+- Tipos compartilhados em `shared/`.
+- O frontend le `import.meta.env.VITE_SOCKET_URL` em `src/services/socketClient.ts`.
+
 ## Rodando localmente
 
 Instale as dependencias:
@@ -15,13 +22,15 @@ Instale as dependencias:
 npm install
 ```
 
-Copie `.env.example` para `.env` se quiser ajustar a URL do servidor:
+Crie um arquivo `.env.local` na raiz baseado no `.env.example`:
 
 ```bash
 VITE_SOCKET_URL=http://localhost:3001
 PORT=3001
-CLIENT_ORIGIN=http://localhost:5173
+CLIENT_ORIGIN=http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000,http://127.0.0.1:3000
 ```
+
+O Vite so recarrega variaveis de ambiente quando inicia. Depois de criar ou alterar `.env.local`, reinicie o servidor Vite.
 
 Suba cliente e servidor juntos:
 
@@ -38,7 +47,21 @@ npm run dev:server
 
 O cliente abre em `http://localhost:5173`. O servidor responde em `http://localhost:3001/health`.
 
-## Usando a sessao online
+## Como rodar o multiplayer localmente
+
+1. Rode `npm install`.
+2. Confirme que existe `.env.local` na raiz com `VITE_SOCKET_URL=http://localhost:3001`.
+3. Confirme que o backend usa `PORT=3001`.
+4. Rode `npm run dev` para subir cliente e servidor juntos.
+5. Se preferir separado, rode `npm run dev:server` e `npm run dev:client` em terminais diferentes.
+6. Abra `http://localhost:5173` em duas abas ou dois navegadores.
+7. Na primeira aba, entre em **Sessao online** e crie uma sala como Mestre.
+8. Na segunda aba, entre na mesma sala usando o codigo como Jogador.
+9. Crie ou selecione uma ficha e teste uma rolagem `2d6`; ela deve aparecer para os dois jogadores.
+
+Se a tela mostrar **Backend nao configurado**, crie `.env.local` com a URL acima e reinicie o Vite. Se mostrar **Erro de conexao**, confirme que `npm run dev:server` esta rodando.
+
+## Usando a sessao online no app
 
 1. Abra o app e clique em **Sessao online**.
 2. Crie uma sala como Mestre ou entre com um codigo existente.
@@ -81,6 +104,8 @@ Configure no Render:
 - `PORT` pode ficar automatico pelo Render
 
 Depois do deploy do backend, use a URL gerada pelo Render como `VITE_SOCKET_URL` no GitHub.
+
+Nao coloque URLs fixas de producao no codigo. Use `VITE_SOCKET_URL` no frontend e `CLIENT_ORIGIN`/`CLIENT_URL`/`CORS_ORIGIN` no backend.
 
 ## Persistencia e limites
 

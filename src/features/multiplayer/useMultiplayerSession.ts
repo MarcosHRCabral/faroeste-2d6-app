@@ -19,7 +19,7 @@ import { setLocalPath, setSessionPath } from "./routes";
 import { useSocketConnection } from "./useSocketConnection";
 
 export function useMultiplayerSession(initialCode = "") {
-  const { socket, socketUrl, status } = useSocketConnection();
+  const { socket, socketConfigured, socketUrl, socketConfig, connectionError, status } = useSocketConnection();
   const [session, setSession] = useState<PublicSessionState | null>(null);
   const [credentials, setCredentials] = useState<SessionCredentials | null>(() =>
     loadStoredCredentials(initialCode || undefined)
@@ -210,7 +210,10 @@ export function useMultiplayerSession(initialCode = "") {
 
   return {
     socketReady: Boolean(socket),
+    socketConfigured,
     socketUrl,
+    socketConfig,
+    connectionError,
     status,
     session,
     credentials,

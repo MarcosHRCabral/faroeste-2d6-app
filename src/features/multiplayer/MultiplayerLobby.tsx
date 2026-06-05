@@ -3,7 +3,17 @@ import { LogIn, Plus, WifiOff } from "lucide-react";
 import { useMultiplayer } from "./MultiplayerContext";
 
 export default function MultiplayerLobby({ initialCode = "" }: { initialCode?: string }) {
-  const { socketReady, socketUrl, status, error, createSession, joinSession } = useMultiplayer();
+  const {
+    socketReady,
+    socketConfigured,
+    socketConfig,
+    socketUrl,
+    status,
+    connectionError,
+    error,
+    createSession,
+    joinSession
+  } = useMultiplayer();
   const [playerName, setPlayerName] = useState("");
   const [sessionName, setSessionName] = useState("");
   const [code, setCode] = useState(initialCode);
@@ -21,11 +31,9 @@ export default function MultiplayerLobby({ initialCode = "" }: { initialCode?: s
         </p>
       </div>
 
-      {!socketReady ? (
+      {!socketConfigured ? (
         <div className="warning-list">
-          <p>
-            Configure <strong>VITE_SOCKET_URL</strong> para conectar ao backend Socket.IO.
-          </p>
+          <p>{socketConfig.missingMessage}</p>
         </div>
       ) : null}
 
@@ -37,9 +45,15 @@ export default function MultiplayerLobby({ initialCode = "" }: { initialCode?: s
 
       <div className="connection-strip">
         <span className={`status-dot ${status}`} />
-        <span>{status === "connected" ? "Conectado" : status === "reconnecting" ? "Reconectando" : "Desconectado"}</span>
-        <small>{socketUrl || "sem backend configurado"}</small>
+        <span>{getStatusLabel(status)}</span>
+        {socketConfig.isDevelopment ? <small>Backend: {socketUrl || "sem backend configurado"}</small> : null}
       </div>
+
+      {status === "error" && connectionError ? (
+        <div className="warning-list" role="alert">
+          <p>Erro de conexao com o backend: {connectionError}</p>
+        </div>
+      ) : null}
 
       <div className="lobby-grid">
         <form
@@ -146,12 +160,26 @@ export default function MultiplayerLobby({ initialCode = "" }: { initialCode?: s
         </form>
       </div>
 
-      {!socketReady || status !== "connected" ? (
+      {!socketConfigured || status !== "connected" ? (
         <p className="muted connection-help">
           <WifiOff size={16} />
-          Para testar localmente, rode tambem <code>npm run dev:server</code>.
+          Para testar localmente, crie <code>.env.local</code>, reinicie o Vite e rode tambem{" "}
+          <code>npm run dev:server</code>.
         </p>
       ) : null}
     </section>
   );
+}
+
+function getStatusLabel(status: string): string {
+  const labels: Record<string, string> = {
+    unconfigured: "Backend nao configurado",
+    connecting: "Conectando...",
+    connected: "Conectado",
+    reconnecting: "Reconectando...",
+    disconnected: "Desconectado",
+    error: "Erro de conexao"
+  };
+
+  return labels[status] ?? "Desconectado";
 }
