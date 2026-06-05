@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
-    "test": "node --no-warnings --loader tsx --test src/logic/dice.test.ts src/logic/character.test.ts src/components/CharacterCreator.test.tsx"
+    "test": "tsx --test src/logic/dice.test.ts src/logic/character.test.ts src/components/CharacterCreator.test.tsx"
   },
   "dependencies": {
     "@vitejs/plugin-react": "^4.3.4",
