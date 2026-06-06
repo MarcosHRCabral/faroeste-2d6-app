@@ -979,6 +979,10 @@ h3 {
   gap: 1rem;
 }
 
+.multiplayer-choice-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
 .lobby-card {
   display: grid;
   gap: 0.85rem;
@@ -1151,6 +1155,30 @@ h3 {
   gap: 0.45rem;
 }
 
+.p2p-signal-panel {
+  max-width: min(1180px, calc(100vw - 2rem));
+  margin: 0 auto 1rem;
+}
+
+.p2p-signal-grid,
+.p2p-snapshot-tools {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.p2p-signal-panel textarea {
+  width: 100%;
+  min-height: 6rem;
+  font-family: "Courier New", monospace;
+  font-size: 0.82rem;
+}
+
 @media (max-width: 1180px) {
   .layout,
   .online-layout,
@@ -1158,6 +1186,10 @@ h3 {
   .choice-grid,
   .sheet-header {
     grid-template-columns: 1fr;
+  }
+
+  .multiplayer-choice-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .sidebar {

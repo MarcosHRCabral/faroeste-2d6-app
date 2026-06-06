@@ -3,17 +3,17 @@ import type { Socket } from "socket.io-client";
 import { getSocket, getSocketConfig } from "../../services/socketClient";
 import type { ConnectionStatus } from "../../../shared/session";
 
-export function useSocketConnection() {
+export function useSocketConnection(enabled = true) {
   const socketConfig = getSocketConfig();
-  const socket = useMemo(() => getSocket(), []);
+  const socket = useMemo(() => (enabled ? getSocket() : null), [enabled]);
   const [status, setStatus] = useState<ConnectionStatus>(
-    !socketConfig.isConfigured ? "unconfigured" : socket?.connected ? "connected" : "connecting"
+    !enabled ? "disconnected" : !socketConfig.isConfigured ? "unconfigured" : socket?.connected ? "connected" : "connecting"
   );
   const [connectionError, setConnectionError] = useState("");
 
   useEffect(() => {
     if (!socket) {
-      setStatus("unconfigured");
+      setStatus(enabled ? "unconfigured" : "disconnected");
       return undefined;
     }
 
@@ -44,7 +44,7 @@ export function useSocketConnection() {
       socket.off("connect_error", handleConnectError);
       socket.io.off("reconnect_attempt", handleReconnectAttempt);
     };
-  }, [socket]);
+  }, [enabled, socket]);
 
   return {
     socket: socket as Socket | null,

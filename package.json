@@ -12,7 +12,7 @@
     "preview": "vite preview",
     "start:server": "tsx server/src/index.ts",
     "test": "npm run test:client && npm run test:server",
-    "test:client": "tsx --test src/logic/dice.test.ts src/logic/character.test.ts src/components/CharacterCreator.test.tsx",
+    "test:client": "tsx --test src/logic/dice.test.ts src/logic/character.test.ts src/components/CharacterCreator.test.tsx src/features/multiplayer/webrtc/webrtcSignal.test.ts src/features/multiplayer/p2pSessionLogic.test.ts",
     "test:server": "tsx --test server/src/utils/generateCode.test.ts server/src/dice/diceService.test.ts server/src/sessions/sessionService.test.ts"
   },
   "dependencies": {

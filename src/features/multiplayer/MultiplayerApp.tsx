@@ -1,5 +1,6 @@
 import MultiplayerLobby from "./MultiplayerLobby";
 import MultiplayerTable from "./MultiplayerTable";
+import P2PSignalPanel from "./P2PSignalPanel";
 import { MultiplayerProvider, useMultiplayer } from "./MultiplayerContext";
 
 export default function MultiplayerApp({ initialCode = "" }: { initialCode?: string }) {
@@ -13,5 +14,12 @@ export default function MultiplayerApp({ initialCode = "" }: { initialCode?: str
 function MultiplayerContent({ initialCode }: { initialCode: string }) {
   const { session } = useMultiplayer();
 
-  return session ? <MultiplayerTable /> : <MultiplayerLobby initialCode={initialCode} />;
+  return session ? (
+    <>
+      <P2PSignalPanel />
+      <MultiplayerTable />
+    </>
+  ) : (
+    <MultiplayerLobby initialCode={initialCode} />
+  );
 }
